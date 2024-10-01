@@ -4,20 +4,18 @@ function Gameboard(){
     for(let i = 0; i<3; i++){
         board[i]=[];
         for(let j = 0; j<3; j++){
-            board[i][j] = [];
+            board[i][j] = [" "];
         }
     }
 
     const getBoard = () => board;
-    const logBoard = () => console.log(board);
 
     const tickCell = function(cell, token){
         let [row, column] = cell;
         board[row][column] = token;
-        console.log("tick")
     }
 
-    return {getBoard, logBoard, tickCell};
+    return {getBoard, tickCell};
 }
 
 function GameController(
@@ -41,12 +39,41 @@ function GameController(
         (activePlayer === players[1]) ? activePlayer = players[0] : activePlayer = players[1];
     };
 
+    const checkWinner = function(){
+        for (let i = 0; i < 3; i++) {
+            // Check rows
+            if (board.getBoard()[i][0] !== " " && board.getBoard()[i][0] === board.getBoard()[i][1] && board.getBoard()[i][1] === board.getBoard()[i][2]) {
+                return board.getBoard()[i][0]; // Return "X" or "O"
+            }
+            // Check columns
+            if (board.getBoard()[0][i] !== " " && board.getBoard()[0][i] === board.getBoard()[1][i] && board.getBoard()[1][i] === board.getBoard()[2][i]) {
+                return board.getBoard()[0][i]; // Return "X" or "O"
+            }
+        }
+
+        // Check diagonals
+        if (board.getBoard()[1][1] !== " ") { // Check if the center cell is not empty
+            if (board.getBoard()[0][0] === board.getBoard()[1][1] && board.getBoard()[1][1] === board.getBoard()[2][2]) {
+                return board.getBoard()[1][1]; // Return "X" or "O"
+            }
+            if (board.getBoard()[0][2] === board.getBoard()[1][1] && board.getBoard()[1][1] === board.getBoard()[2][0]) {
+                return board.getBoard()[1][1]; // Return "X" or "O"
+            }
+        }
+
+        // No winner
+        return null;
+    }
+
     const playRound = (cell) => {
         board.tickCell(cell, activePlayer.token);
-        board.logBoard();
-        switchPlayerTurn();
-        console.log(activePlayer)
+        if (checkWinner() !== null) {
+            console.kog(checkWinner())
+        } else {
+            switchPlayerTurn();
+        }
     };
+
 
     return {playRound, getActivePlayer, getBoard};
 }
@@ -56,13 +83,13 @@ const game = GameController();
 function ScreenController() {
     const game = GameController();
     const board = game.getBoard();
-    let activePlayer = game.getActivePlayer();
     let turnText = document.querySelector(".turn");
     let boardDiv = document.querySelector(".board");
     const updateScreen = () => {
         // Clear the board
         boardDiv.textContent = "";
         // Display whos turn it is
+        let activePlayer = game.getActivePlayer();
         turnText.textContent = "It's " + activePlayer.name+"s turn...";
 
         // Render the board
@@ -78,11 +105,8 @@ function ScreenController() {
         });
 
         function clickHandlerBoard(e) {
-            console.log("AA")
             const selectedCell = e.target.position;
 
-<<<<<<< HEAD
-=======
             // Check if cell is already ticked
             let row = selectedCell[0];
             let column = selectedCell[1];
@@ -92,11 +116,7 @@ function ScreenController() {
             } else {
                 return;
             }
->>>>>>> d395c50 (Checks for boxes availibility and simply does nothing from clicking the wrong box)
             if (!selectedCell) return;
-
-            game.playRound(selectedCell);
-            updateScreen();
         }
         boardDiv.addEventListener("click", clickHandlerBoard);
     }
