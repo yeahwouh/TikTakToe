@@ -20,8 +20,7 @@ function Gameboard(){
 
 function GameController(
     playerOneName = "Player One",
-    playerTwoName = "Player Two"
-) {
+    playerTwoName = "Player Two") {
     const board = Gameboard();
     const getBoard = () => board.getBoard();
 
@@ -66,17 +65,13 @@ function GameController(
     }
 
     const playRound = (cell) => {
-        board.tickCell(cell, activePlayer.token);
-        if (checkWinner() !== null) {
-            console.kog(checkWinner())
-        } else {
+            board.tickCell(cell, activePlayer.token);
             switchPlayerTurn();
         }
-    };
-
-
-    return {playRound, getActivePlayer, getBoard};
+    return {playRound, getActivePlayer, getBoard, checkWinner};
 }
+
+
 
 const game = GameController();
 
@@ -103,6 +98,9 @@ function ScreenController() {
                boardDiv.appendChild(cellButton);
             });
         });
+        if (game.checkWinner() !== null) {
+            turnText.textContent = game.checkWinner() + " WON!!"
+        }
 
         function clickHandlerBoard(e) {
             const selectedCell = e.target.position;
