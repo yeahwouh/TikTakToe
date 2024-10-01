@@ -81,12 +81,24 @@ function ScreenController() {
             console.log("AA")
             const selectedCell = e.target.position;
 
+<<<<<<< HEAD
+=======
+            // Check if cell is already ticked
+            let row = selectedCell[0];
+            let column = selectedCell[1];
+            if (board[row][column] == " ") {
+                game.playRound(selectedCell);
+                updateScreen();
+            } else {
+                return;
+            }
+>>>>>>> d395c50 (Checks for boxes availibility and simply does nothing from clicking the wrong box)
             if (!selectedCell) return;
 
             game.playRound(selectedCell);
             updateScreen();
         }
-        boardDiv.addEventListener("click", clickHandlerBoard, {once : true});
+        boardDiv.addEventListener("click", clickHandlerBoard);
     }
 
     // Initial render
