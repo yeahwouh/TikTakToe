@@ -18,9 +18,7 @@ function Gameboard(){
     return {getBoard, tickCell};
 }
 
-function GameController(
-    playerOneName = "Player One",
-    playerTwoName = "Player Two") {
+function GameController(playerOneName, playerTwoName) {
     const board = Gameboard();
     const getBoard = () => board.getBoard();
 
@@ -71,15 +69,14 @@ function GameController(
     return {playRound, getActivePlayer, getBoard, checkWinner};
 }
 
-
-
-const game = GameController();
-
-function ScreenController() {
-    const game = GameController();
+function ScreenController(playerOneName, playerTwoName) {
+    const game = GameController(playerOneName, playerTwoName);
     const board = game.getBoard();
     let turnText = document.querySelector(".turn");
-    let boardDiv = document.querySelector(".board");
+    let container = document.querySelector(".container");
+    let boardDiv = document.createElement("div");
+    boardDiv.classList.add("board")
+    container.appendChild(boardDiv)
     const updateScreen = () => {
         // Clear the board
         boardDiv.textContent = "";
@@ -100,6 +97,8 @@ function ScreenController() {
         });
         if (game.checkWinner() !== null) {
             turnText.textContent = game.checkWinner() + " WON!!"
+            boardDiv.remove();
+            container.append(form);
         }
 
         function clickHandlerBoard(e) {
@@ -123,4 +122,11 @@ function ScreenController() {
     updateScreen();
 }
 
-ScreenController();
+let form = document.getElementById('nameForm')
+form.addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from refreshing the page
+    const playerOneName = document.getElementById('nameInput1').value;
+    const playerTwoName = document.getElementById('nameInput2').value;
+    form.remove()
+    ScreenController(playerOneName, playerTwoName);
+});
