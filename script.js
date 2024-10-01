@@ -1,4 +1,5 @@
-function GameBoard(){
+function Gameboard(){
+
     let board = [];
     for(let i = 0; i<3; i++){
         board[i]=[];
@@ -6,6 +7,7 @@ function GameBoard(){
             board[i][j] = [];
         }
     }
+
     const getBoard = () => board;
     const logBoard = () => {
       for(let row in board){
@@ -13,29 +15,52 @@ function GameBoard(){
       }
     };
 
-    const playerSigns = ["O", "X"];
-    const tickCell = function(cell, player){
+    const tickCell = function(cell, token){
         // Map cell to the actual indices
-        cell = cell.map((x) => x-1);
+        cell = cell.map(num => num-1);
         let [row, column] = cell;
-        board[row][column] = playerSigns[player-1];
+        board[row][column] = token;
     }
-
 
     return {getBoard, logBoard, tickCell};
 }
 
-let jonn = GameBoard();
-jonn.tickCell([2,2], 2)
-jonn.tickCell([2,3], 1)
-jonn.tickCell([1,1], 2)
-jonn.tickCell([3,3], 1)
-jonn.tickCell([1,2], 2)
-jonn.tickCell([1,3], 1)
+function GameController(
+    playerOneName = "Player One",
+    playerTwoName = "Player Two"
+) {
+    const board = Gameboard();
 
-jonn.logBoard()
+    const players = [
+        {name: playerOneName,
+         token: "O"},
+        {name: playerTwoName,
+         token: "X"}
+    ];
 
-let a = [[1,2,3],
-                [4,5,6],
-                [7,8,9]];
-console.log(a[2][2]);
+    let activePlayer = players[0];
+    const getActivePlayer = () => activePlayer;
+
+    const switchPlayerTurn = () => {
+        (activePlayer === players[1]) ? activePlayer = players[0] : activePlayer = players[1];
+    };
+
+    const playRound = (cell) => {
+        board.tickCell(cell, activePlayer.token);
+        board.logBoard();
+        switchPlayerTurn();
+
+    };
+
+    const printNewRound = () => {
+        console.log(`It's ${activePlayer.name}s turn`);
+        board.logBoard();
+    };
+
+    return {playRound, getActivePlayer};
+}
+
+const game = GameController();
+
+
+game.playRound([1,2])
